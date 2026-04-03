@@ -1,0 +1,991 @@
+[01/06 20:43:06] main-logger INFO: agglayers: 0
+arch: stratified_transformer
+aug: True
+base_guidance_start_epoch: 1
+base_lr: 0.0001
+channels: [48, 96, 192, 384]
+classes: 13
+concat_xyz: True
+cvfold: 1
+data_name: s3dis
+data_root: 
+depths: [2, 2, 6, 2]
+dist_backend: nccl
+dist_url: tcp://127.0.0.1:35015
+distributed: True
+downsample_scale: 8
+drop_path_rate: 0.3
+drop_rate: 0.5
+epochs: 30
+eval_freq: 1
+eval_split: test
+evaluate: True
+fea_dim: 6
+forvis: 0
+grid_size: 0.04
+grid_sizes: [0.04, 0.08, 0.16, 0.32]
+ignore_label: 255
+jitter_clip: 0.02
+jitter_sigma: 0.005
+k: 16
+k_shot: 1
+loop: 1
+manual_seed: 123
+max_batch_points: 140000
+max_constran_neighbors: 8
+max_num_neighbors: 34
+milestones: [100]
+momentum: 0.9
+multiplier: 0.1
+multiprocessing_distributed: True
+n_queries: 1
+n_subprototypes: 100
+n_way: 2
+ngpus_per_node: 4
+num_episode: 400
+num_episode_per_comb: 100
+num_heads: [3, 6, 12, 24]
+num_layers: 4
+optimizer: AdamW
+patch_size: 0.04
+pretrain_backbone: None
+print_freq: 1
+qgpa_num: 50
+quant_size: 0.01
+quant_sizes: [0.01, 0.02, 0.04, 0.08]
+rank: 0
+ratio: 0.25
+rel_key: True
+rel_query: True
+rel_value: True
+resume: None
+save_freq: 1
+save_path: /home/user/CODES/ex_data/COSeg_mult/2_924/070/test/
+scheduler: MultiStep
+scheduler_update: epoch
+start_epoch: 0
+stem_transformer: True
+step_epoch: 30
+sync_bn: False
+target_class: table
+test: True
+textmodel: lseg
+train_gpu: [0, 1, 2, 3]
+transformer_lr_scale: 0.1
+up_k: 3
+use_amp: True
+use_xyz: True
+vis: 0
+vis_save_path: None
+voxel_max: 20480
+voxel_size: 0.02
+warmup: linear
+warmup_iters: 1500
+warmup_ratio: 1e-06
+weight: /home/user/CODES/ex_data/COSeg_mult/2_924/070/model/model_best.pth
+weight_decay: 0.01
+window_size: [0.16, 0.32, 0.64, 1.28]
+workers: 32
+world_size: 4
+[01/06 20:43:06] main-logger INFO: => creating model ...
+[01/06 20:43:06] main-logger INFO: MM_FSS(
+  (criterion): CrossEntropyLoss()
+  (criterion_base): CrossEntropyLoss()
+  (encoder): Stratified(
+    (stem_layer): ModuleList(
+      (0): KPConvSimpleBlock(
+        (kpconv): KPConvLayer(InF: 6, OutF: 48, kernel_pts: 15, radius: 0.06, KP_influence: linear, Add_one: False)
+        (bn): FastBatchNorm1d(
+          (batch_norm): BatchNorm1d(48, eps=1e-05, momentum=0.02, affine=True, track_running_stats=True)
+        )
+        (activation): LeakyReLU(negative_slope=0.2)
+      )
+    )
+    (layers): ModuleList(
+      (0): BasicLayer(
+        (blocks): ModuleList(
+          (0): SwinTransformerBlock(
+            (norm1): LayerNorm((48,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=48, out_features=144, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=48, out_features=48, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): Identity()
+            (norm2): LayerNorm((48,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=48, out_features=192, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=192, out_features=48, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (1): SwinTransformerBlock(
+            (norm1): LayerNorm((48,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=48, out_features=144, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=48, out_features=48, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.027)
+            (norm2): LayerNorm((48,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=48, out_features=192, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=192, out_features=48, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+        )
+        (downsample): TransitionDown(
+          (norm): LayerNorm((48,), eps=1e-05, elementwise_affine=True)
+          (linear): Linear(in_features=48, out_features=96, bias=False)
+          (pool): MaxPool1d(kernel_size=16, stride=16, padding=0, dilation=1, ceil_mode=False)
+        )
+      )
+      (1): BasicLayer(
+        (blocks): ModuleList(
+          (0): SwinTransformerBlock(
+            (norm1): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=96, out_features=288, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=96, out_features=96, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.055)
+            (norm2): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=96, out_features=384, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=384, out_features=96, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (1): SwinTransformerBlock(
+            (norm1): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=96, out_features=288, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=96, out_features=96, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.082)
+            (norm2): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=96, out_features=384, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=384, out_features=96, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+        )
+        (downsample): TransitionDown(
+          (norm): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+          (linear): Linear(in_features=96, out_features=192, bias=False)
+          (pool): MaxPool1d(kernel_size=16, stride=16, padding=0, dilation=1, ceil_mode=False)
+        )
+      )
+      (2): BasicLayer(
+        (blocks): ModuleList(
+          (0): SwinTransformerBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=192, out_features=576, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=192, out_features=192, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.109)
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=192, out_features=768, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=768, out_features=192, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (1): SwinTransformerBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=192, out_features=576, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=192, out_features=192, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.136)
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=192, out_features=768, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=768, out_features=192, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (2): SwinTransformerBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=192, out_features=576, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=192, out_features=192, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.164)
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=192, out_features=768, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=768, out_features=192, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (3): SwinTransformerBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=192, out_features=576, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=192, out_features=192, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.191)
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=192, out_features=768, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=768, out_features=192, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (4): SwinTransformerBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=192, out_features=576, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=192, out_features=192, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.218)
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=192, out_features=768, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=768, out_features=192, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+          (5): SwinTransformerBlock(
+            (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (attn): WindowAttention(
+              (qkv): Linear(in_features=192, out_features=576, bias=True)
+              (attn_drop): Dropout(p=0.0, inplace=True)
+              (proj): Linear(in_features=192, out_features=192, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=True)
+              (softmax): Softmax(dim=-1)
+            )
+            (drop_path): DropPath(drop_prob=0.245)
+            (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=192, out_features=768, bias=True)
+              (act): GELU(approximate=none)
+              (fc2): Linear(in_features=768, out_features=192, bias=True)
+              (drop): Dropout(p=0.0, inplace=True)
+            )
+          )
+        )
+        (downsample): TransitionDown(
+          (norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (linear): Linear(in_features=192, out_features=384, bias=False)
+          (pool): MaxPool1d(kernel_size=16, stride=16, padding=0, dilation=1, ceil_mode=False)
+        )
+      )
+    )
+    (UF_head): BasicLayer(
+      (blocks): ModuleList(
+        (0): SwinTransformerBlock(
+          (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (attn): WindowAttention(
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (attn_drop): Dropout(p=0.0, inplace=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+            (proj_drop): Dropout(p=0.0, inplace=True)
+            (softmax): Softmax(dim=-1)
+          )
+          (drop_path): DropPath(drop_prob=0.109)
+          (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (mlp): Mlp(
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate=none)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop): Dropout(p=0.0, inplace=True)
+          )
+        )
+        (1): SwinTransformerBlock(
+          (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (attn): WindowAttention(
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (attn_drop): Dropout(p=0.0, inplace=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+            (proj_drop): Dropout(p=0.0, inplace=True)
+            (softmax): Softmax(dim=-1)
+          )
+          (drop_path): DropPath(drop_prob=0.136)
+          (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (mlp): Mlp(
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate=none)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop): Dropout(p=0.0, inplace=True)
+          )
+        )
+        (2): SwinTransformerBlock(
+          (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (attn): WindowAttention(
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (attn_drop): Dropout(p=0.0, inplace=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+            (proj_drop): Dropout(p=0.0, inplace=True)
+            (softmax): Softmax(dim=-1)
+          )
+          (drop_path): DropPath(drop_prob=0.164)
+          (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (mlp): Mlp(
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate=none)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop): Dropout(p=0.0, inplace=True)
+          )
+        )
+        (3): SwinTransformerBlock(
+          (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (attn): WindowAttention(
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (attn_drop): Dropout(p=0.0, inplace=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+            (proj_drop): Dropout(p=0.0, inplace=True)
+            (softmax): Softmax(dim=-1)
+          )
+          (drop_path): DropPath(drop_prob=0.191)
+          (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (mlp): Mlp(
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate=none)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop): Dropout(p=0.0, inplace=True)
+          )
+        )
+        (4): SwinTransformerBlock(
+          (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (attn): WindowAttention(
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (attn_drop): Dropout(p=0.0, inplace=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+            (proj_drop): Dropout(p=0.0, inplace=True)
+            (softmax): Softmax(dim=-1)
+          )
+          (drop_path): DropPath(drop_prob=0.218)
+          (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (mlp): Mlp(
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate=none)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop): Dropout(p=0.0, inplace=True)
+          )
+        )
+        (5): SwinTransformerBlock(
+          (norm1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (attn): WindowAttention(
+            (qkv): Linear(in_features=192, out_features=576, bias=True)
+            (attn_drop): Dropout(p=0.0, inplace=True)
+            (proj): Linear(in_features=192, out_features=192, bias=True)
+            (proj_drop): Dropout(p=0.0, inplace=True)
+            (softmax): Softmax(dim=-1)
+          )
+          (drop_path): DropPath(drop_prob=0.245)
+          (norm2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+          (mlp): Mlp(
+            (fc1): Linear(in_features=192, out_features=768, bias=True)
+            (act): GELU(approximate=none)
+            (fc2): Linear(in_features=768, out_features=192, bias=True)
+            (drop): Dropout(p=0.0, inplace=True)
+          )
+        )
+      )
+      (downsample): TransitionDown(
+        (norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (linear): Linear(in_features=192, out_features=384, bias=False)
+        (pool): MaxPool1d(kernel_size=16, stride=16, padding=0, dilation=1, ceil_mode=False)
+      )
+    )
+    (mlp_decode_layer): Sequential(
+      (0): Linear(in_features=288, out_features=288, bias=True)
+      (1): BatchNorm1d(288, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): Linear(in_features=288, out_features=512, bias=True)
+    )
+    (classifier): Sequential(
+      (0): Linear(in_features=192, out_features=192, bias=True)
+      (1): BatchNorm1d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): Linear(in_features=192, out_features=7, bias=True)
+    )
+  )
+  (lin1): Sequential(
+    (0): Linear(in_features=100, out_features=192, bias=True)
+    (1): ReLU(inplace=True)
+  )
+  (lin2): Sequential(
+    (0): Linear(in_features=100, out_features=192, bias=True)
+    (1): ReLU(inplace=True)
+  )
+  (query_lin1): Sequential(
+    (0): Linear(in_features=50, out_features=192, bias=True)
+    (1): ReLU(inplace=True)
+  )
+  (query_lin2): Sequential(
+    (0): Linear(in_features=50, out_features=192, bias=True)
+    (1): ReLU(inplace=True)
+  )
+  (kpconv): KPConvResBlock(
+    (unary_1): Sequential(
+      (0): Linear(in_features=192, out_features=48, bias=False)
+      (1): FastBatchNorm1d(
+        (batch_norm): BatchNorm1d(48, eps=1e-05, momentum=0.02, affine=True, track_running_stats=True)
+      )
+      (2): LeakyReLU(negative_slope=0.2)
+    )
+    (unary_2): Sequential(
+      (0): Linear(in_features=48, out_features=192, bias=False)
+      (1): FastBatchNorm1d(
+        (batch_norm): BatchNorm1d(192, eps=1e-05, momentum=0.02, affine=True, track_running_stats=True)
+      )
+      (2): LeakyReLU(negative_slope=0.2)
+    )
+    (kpconv): KPConvLayer(InF: 48, OutF: 48, kernel_pts: 15, radius: 0.12, KP_influence: linear, Add_one: False)
+    (bn): FastBatchNorm1d(
+      (batch_norm): BatchNorm1d(192, eps=1e-05, momentum=0.02, affine=True, track_running_stats=True)
+    )
+    (activation): LeakyReLU(negative_slope=0.2)
+    (shortcut_op): Identity()
+  )
+  (QGPA): QGPA(
+    (layer_norm): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (q_map): Conv1d(50, 512, kernel_size=(1,), stride=(1,), bias=False)
+    (k_map): Conv1d(50, 512, kernel_size=(1,), stride=(1,), bias=False)
+    (v_map): Linear(in_features=192, out_features=192, bias=True)
+    (fc): Conv1d(192, 192, kernel_size=(1,), stride=(1,), bias=False)
+    (dropout): Dropout(p=0.1, inplace=False)
+  )
+  (Adapter1): Sequential(
+    (0): Linear(in_features=192, out_features=192, bias=True)
+    (1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=192, out_features=3, bias=True)
+  )
+  (Adapter2): Sequential(
+    (0): Linear(in_features=3, out_features=192, bias=True)
+    (1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=192, out_features=3, bias=True)
+  )
+  (Adapter3): Sequential(
+    (0): Linear(in_features=3, out_features=192, bias=True)
+    (1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=192, out_features=3, bias=True)
+  )
+  (Generator): Sequential(
+    (0): Linear(in_features=192, out_features=192, bias=True)
+    (1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=192, out_features=1, bias=True)
+  )
+  (bk_ffn): Sequential(
+    (0): Linear(in_features=288, out_features=768, bias=True)
+    (1): ReLU()
+    (2): Dropout(p=0.1, inplace=False)
+    (3): Linear(in_features=768, out_features=192, bias=True)
+  )
+  (msf_layers): ModuleList()
+  (ccb_layers): ModuleList(
+    (0): CCBLayer(
+      (transformer_layer): CCB_TransformerLayer(
+        (attention1): AttentionLayer(
+          (q): Linear(in_features=192, out_features=192, bias=True)
+          (k): Linear(in_features=192, out_features=192, bias=True)
+          (v): Linear(in_features=192, out_features=192, bias=True)
+          (attention): LinearAttention()
+        )
+        (attention2): AttentionLayer(
+          (q): Linear(in_features=192, out_features=192, bias=True)
+          (k): Linear(in_features=192, out_features=192, bias=True)
+          (v): Linear(in_features=192, out_features=192, bias=True)
+          (attention): LinearAttention()
+        )
+        (attention3): AttentionLayer(
+          (q): Linear(in_features=192, out_features=192, bias=True)
+          (k): Linear(in_features=192, out_features=192, bias=True)
+          (v): Linear(in_features=192, out_features=192, bias=True)
+          (attention): LinearAttention()
+        )
+        (MLP0): Sequential(
+          (0): Linear(in_features=192, out_features=768, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=768, out_features=192, bias=True)
+        )
+        (MLP1): Sequential(
+          (0): Linear(in_features=192, out_features=768, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=768, out_features=192, bias=True)
+        )
+        (MLP2): Sequential(
+          (0): Linear(in_features=192, out_features=768, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=768, out_features=192, bias=True)
+        )
+        (MLP3): Sequential(
+          (0): Linear(in_features=192, out_features=768, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=768, out_features=192, bias=True)
+        )
+        (norm0): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm11): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm12): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm21): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm22): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm31): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm32): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+        (norm_xbg): LayerNorm((2, 192), eps=1e-05, elementwise_affine=True)
+        (base_merge): Conv1d(2, 1, kernel_size=(1,), stride=(1,), bias=False)
+      )
+      (cor_norm): LayerNorm((3, 192), eps=1e-05, elementwise_affine=True)
+      (semguid_norm): LayerNorm((3, 192), eps=1e-05, elementwise_affine=True)
+      (weight_mlp): Sequential(
+        (0): Linear(in_features=384, out_features=384, bias=True)
+        (1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+        (2): ReLU()
+        (3): Dropout(p=0.1, inplace=False)
+        (4): Linear(in_features=384, out_features=1, bias=True)
+      )
+    )
+  )
+  (class_reduce): MLPWithoutResidual(
+    (fc1): Linear(in_features=1152, out_features=4608, bias=True)
+    (fc2): Linear(in_features=4608, out_features=192, bias=True)
+    (relu): ReLU()
+  )
+  (bg_proto_reduce): MLPWithoutResidual(
+    (fc1): Linear(in_features=200, out_features=800, bias=True)
+    (fc2): Linear(in_features=800, out_features=100, bias=True)
+    (relu): ReLU()
+  )
+  (IF_bg_proto_reduce): MLPWithoutResidual(
+    (fc1): Linear(in_features=200, out_features=800, bias=True)
+    (fc2): Linear(in_features=800, out_features=100, bias=True)
+    (relu): ReLU()
+  )
+)
+[01/06 20:43:06] main-logger INFO: #Model parameters: 16596150
+[01/06 20:43:07] main-logger INFO: => loading weight '/home/user/CODES/ex_data/COSeg_mult/2_924/070/model/model_best.pth'
+[01/06 20:43:07] main-logger INFO: => loaded weight '/home/user/CODES/ex_data/COSeg_mult/2_924/070/model/model_best.pth'
+[01/06 20:43:07] main-logger INFO: The main process prepares test data while other processes wait...
+[01/06 20:43:13] main-logger INFO: >>>>>>>>>>>>>>>> Start Evaluation >>>>>>>>>>>>>>>>
+[01/06 20:43:33] main-logger INFO: Test: [1/375] Data 17.079 (17.079) Batch 20.222 (20.222) Loss 2.2350 (2.2350) Accuracy 0.8512.
+[01/06 20:43:34] main-logger INFO: Test: [2/375] Data 0.001 (8.540) Batch 0.923 (10.573) Loss 2.5408 (2.3855) Accuracy 0.8605.
+[01/06 20:43:35] main-logger INFO: Test: [3/375] Data 0.000 (5.693) Batch 1.228 (7.458) Loss 2.4444 (2.4061) Accuracy 0.8430.
+[01/06 20:43:36] main-logger INFO: Test: [4/375] Data 0.001 (4.270) Batch 1.131 (5.876) Loss 2.6988 (2.4802) Accuracy 0.5526.
+[01/06 20:43:37] main-logger INFO: Test: [5/375] Data 0.000 (3.416) Batch 0.847 (4.870) Loss 2.5855 (2.5024) Accuracy 0.6793.
+[01/06 20:43:38] main-logger INFO: Test: [6/375] Data 0.000 (2.847) Batch 1.195 (4.258) Loss 2.5088 (2.5034) Accuracy 0.8211.
+[01/06 20:43:39] main-logger INFO: Test: [7/375] Data 0.000 (2.440) Batch 0.756 (3.758) Loss 2.5375 (2.5075) Accuracy 0.7773.
+[01/06 20:43:40] main-logger INFO: Test: [8/375] Data 0.000 (2.135) Batch 0.999 (3.413) Loss 2.5116 (2.5080) Accuracy 0.7375.
+[01/06 20:43:41] main-logger INFO: Test: [9/375] Data 0.001 (1.898) Batch 1.106 (3.156) Loss 2.6410 (2.5228) Accuracy 0.7415.
+[01/06 20:43:42] main-logger INFO: Test: [10/375] Data 0.001 (1.708) Batch 1.109 (2.952) Loss 2.3033 (2.4996) Accuracy 0.8674.
+[01/06 20:43:43] main-logger INFO: Test: [11/375] Data 0.000 (1.553) Batch 1.092 (2.783) Loss 2.2281 (2.4758) Accuracy 0.9378.
+[01/06 20:43:44] main-logger INFO: Test: [12/375] Data 0.000 (1.424) Batch 1.247 (2.655) Loss 2.2652 (2.4562) Accuracy 0.8625.
+[01/06 20:43:46] main-logger INFO: Test: [13/375] Data 0.002 (1.314) Batch 1.127 (2.537) Loss 2.3666 (2.4485) Accuracy 0.9283.
+[01/06 20:43:47] main-logger INFO: Test: [14/375] Data 0.000 (1.220) Batch 1.089 (2.434) Loss 2.3548 (2.4412) Accuracy 0.8570.
+[01/06 20:43:48] main-logger INFO: Test: [15/375] Data 0.000 (1.139) Batch 0.918 (2.333) Loss 2.2274 (2.4251) Accuracy 0.9401.
+[01/06 20:43:49] main-logger INFO: Test: [16/375] Data 0.000 (1.068) Batch 1.168 (2.260) Loss 2.3059 (2.4179) Accuracy 0.8222.
+[01/06 20:43:50] main-logger INFO: Test: [17/375] Data 0.000 (1.005) Batch 1.000 (2.186) Loss 2.1243 (2.4022) Accuracy 0.9766.
+[01/06 20:43:51] main-logger INFO: Test: [18/375] Data 0.001 (0.949) Batch 0.822 (2.110) Loss 3.0277 (2.4379) Accuracy 0.7025.
+[01/06 20:43:52] main-logger INFO: Test: [19/375] Data 0.000 (0.899) Batch 0.976 (2.050) Loss 1.8036 (2.4083) Accuracy 0.9830.
+[01/06 20:43:53] main-logger INFO: Test: [20/375] Data 0.001 (0.854) Batch 0.960 (1.996) Loss 2.7227 (2.4255) Accuracy 0.7776.
+[01/06 20:43:53] main-logger INFO: Test: [21/375] Data 0.000 (0.814) Batch 0.902 (1.944) Loss 2.8434 (2.4430) Accuracy 0.5591.
+[01/06 20:43:54] main-logger INFO: Test: [22/375] Data 0.000 (0.777) Batch 0.766 (1.890) Loss 2.2894 (2.4365) Accuracy 0.8916.
+[01/06 20:43:56] main-logger INFO: Test: [23/375] Data 0.000 (0.743) Batch 1.302 (1.865) Loss 2.5351 (2.4406) Accuracy 0.8482.
+[01/06 20:43:56] main-logger INFO: Test: [24/375] Data 0.001 (0.712) Batch 0.929 (1.826) Loss 2.1985 (2.4299) Accuracy 0.9627.
+[01/06 20:43:57] main-logger INFO: Test: [25/375] Data 0.000 (0.684) Batch 0.790 (1.784) Loss 2.3282 (2.4258) Accuracy 0.8974.
+[01/06 20:43:59] main-logger INFO: Test: [26/375] Data 0.000 (0.657) Batch 1.307 (1.766) Loss 2.5157 (2.4297) Accuracy 0.9221.
+[01/06 20:43:59] main-logger INFO: Test: [27/375] Data 0.000 (0.633) Batch 0.845 (1.732) Loss 2.2439 (2.4217) Accuracy 0.9256.
+[01/06 20:44:00] main-logger INFO: Test: [28/375] Data 0.000 (0.610) Batch 0.800 (1.698) Loss 2.2941 (2.4172) Accuracy 0.9134.
+[01/06 20:44:01] main-logger INFO: Test: [29/375] Data 0.000 (0.589) Batch 1.037 (1.676) Loss 2.7285 (2.4291) Accuracy 0.7063.
+[01/06 20:44:02] main-logger INFO: Test: [30/375] Data 0.000 (0.570) Batch 1.266 (1.662) Loss 2.0062 (2.4146) Accuracy 0.9943.
+[01/06 20:44:04] main-logger INFO: Test: [31/375] Data 0.000 (0.551) Batch 1.124 (1.645) Loss 2.5289 (2.4188) Accuracy 0.7770.
+[01/06 20:44:05] main-logger INFO: Test: [32/375] Data 0.000 (0.534) Batch 0.990 (1.624) Loss 2.6951 (2.4295) Accuracy 0.7093.
+[01/06 20:44:05] main-logger INFO: Test: [33/375] Data 0.001 (0.518) Batch 0.893 (1.602) Loss 2.3170 (2.4270) Accuracy 0.9428.
+[01/06 20:44:06] main-logger INFO: Test: [34/375] Data 0.001 (0.503) Batch 0.750 (1.577) Loss 2.3856 (2.4258) Accuracy 0.8716.
+[01/06 20:44:07] main-logger INFO: Test: [35/375] Data 0.000 (0.488) Batch 0.959 (1.559) Loss 2.0777 (2.4148) Accuracy 0.9731.
+[01/06 20:44:08] main-logger INFO: Test: [36/375] Data 0.000 (0.475) Batch 0.983 (1.543) Loss 2.5409 (2.4185) Accuracy 0.8976.
+[01/06 20:44:09] main-logger INFO: Test: [37/375] Data 0.000 (0.462) Batch 1.255 (1.536) Loss 2.1097 (2.4092) Accuracy 0.9515.
+[01/06 20:44:10] main-logger INFO: Test: [38/375] Data 0.000 (0.450) Batch 0.989 (1.521) Loss 2.3705 (2.4081) Accuracy 0.8896.
+[01/06 20:44:11] main-logger INFO: Test: [39/375] Data 0.000 (0.438) Batch 0.990 (1.507) Loss 2.4212 (2.4084) Accuracy 0.9073.
+[01/06 20:44:12] main-logger INFO: Test: [40/375] Data 0.000 (0.427) Batch 1.033 (1.496) Loss 2.2286 (2.4039) Accuracy 0.9358.
+[01/06 20:44:14] main-logger INFO: Test: [41/375] Data 0.001 (0.417) Batch 1.111 (1.486) Loss 2.7733 (2.4150) Accuracy 0.6354.
+[01/06 20:44:15] main-logger INFO: Test: [42/375] Data 0.000 (0.407) Batch 1.025 (1.475) Loss 2.6358 (2.4210) Accuracy 0.7590.
+[01/06 20:44:16] main-logger INFO: Test: [43/375] Data 0.001 (0.398) Batch 1.345 (1.472) Loss 2.4367 (2.4213) Accuracy 0.9153.
+[01/06 20:44:17] main-logger INFO: Test: [44/375] Data 0.001 (0.389) Batch 1.003 (1.462) Loss 2.6462 (2.4265) Accuracy 0.8683.
+[01/06 20:44:18] main-logger INFO: Test: [45/375] Data 0.000 (0.380) Batch 0.880 (1.449) Loss 2.3623 (2.4252) Accuracy 0.8153.
+[01/06 20:44:19] main-logger INFO: Test: [46/375] Data 0.000 (0.372) Batch 0.827 (1.435) Loss 2.5359 (2.4276) Accuracy 0.8306.
+[01/06 20:44:20] main-logger INFO: Test: [47/375] Data 0.000 (0.364) Batch 1.164 (1.429) Loss 1.9421 (2.4204) Accuracy 0.9594.
+[01/06 20:44:21] main-logger INFO: Test: [48/375] Data 0.000 (0.356) Batch 0.912 (1.419) Loss 2.5665 (2.4239) Accuracy 0.6381.
+[01/06 20:44:22] main-logger INFO: Test: [49/375] Data 0.000 (0.349) Batch 1.033 (1.411) Loss 2.4713 (2.4250) Accuracy 0.8594.
+[01/06 20:44:23] main-logger INFO: Test: [50/375] Data 0.000 (0.342) Batch 1.722 (1.417) Loss 2.9734 (2.4403) Accuracy 0.5991.
+[01/06 20:44:24] main-logger INFO: Test: [51/375] Data 0.000 (0.335) Batch 0.824 (1.405) Loss 1.9941 (2.4326) Accuracy 0.9725.
+[01/06 20:44:25] main-logger INFO: Test: [52/375] Data 0.000 (0.329) Batch 0.836 (1.394) Loss 2.1004 (2.4259) Accuracy 0.9683.
+[01/06 20:44:26] main-logger INFO: Test: [53/375] Data 0.000 (0.323) Batch 1.175 (1.390) Loss 2.9253 (2.4357) Accuracy 0.6527.
+[01/06 20:44:27] main-logger INFO: Test: [54/375] Data 0.001 (0.317) Batch 1.049 (1.384) Loss 2.4303 (2.4356) Accuracy 0.9684.
+[01/06 20:44:28] main-logger INFO: Test: [55/375] Data 0.000 (0.311) Batch 0.952 (1.376) Loss 1.9313 (2.4268) Accuracy 0.9722.
+[01/06 20:44:29] main-logger INFO: Test: [56/375] Data 0.001 (0.305) Batch 1.094 (1.371) Loss 2.2932 (2.4245) Accuracy 0.9729.
+[01/06 20:44:30] main-logger INFO: Test: [57/375] Data 0.000 (0.300) Batch 1.079 (1.366) Loss 2.1796 (2.4205) Accuracy 0.9345.
+[01/06 20:44:31] main-logger INFO: Test: [58/375] Data 0.000 (0.295) Batch 0.884 (1.358) Loss 2.9558 (2.4290) Accuracy 0.6555.
+[01/06 20:44:32] main-logger INFO: Test: [59/375] Data 0.000 (0.290) Batch 0.928 (1.350) Loss 2.2826 (2.4267) Accuracy 0.9130.
+[01/06 20:44:33] main-logger INFO: Test: [60/375] Data 0.000 (0.285) Batch 0.998 (1.344) Loss 2.1113 (2.4219) Accuracy 0.9196.
+[01/06 20:44:34] main-logger INFO: Test: [61/375] Data 0.001 (0.280) Batch 1.138 (1.341) Loss 2.1915 (2.4183) Accuracy 0.9405.
+[01/06 20:44:35] main-logger INFO: Test: [62/375] Data 0.000 (0.276) Batch 0.912 (1.334) Loss 2.2080 (2.4149) Accuracy 0.9424.
+[01/06 20:44:37] main-logger INFO: Test: [63/375] Data 0.000 (0.271) Batch 1.319 (1.334) Loss 2.0123 (2.4078) Accuracy 0.9931.
+[01/06 20:44:38] main-logger INFO: Test: [64/375] Data 0.000 (0.267) Batch 1.040 (1.329) Loss 2.8382 (2.4125) Accuracy 0.6678.
+[01/06 20:44:39] main-logger INFO: Test: [65/375] Data 0.000 (0.263) Batch 0.824 (1.322) Loss 2.3019 (2.4108) Accuracy 0.9429.
+[01/06 20:44:40] main-logger INFO: Test: [66/375] Data 0.000 (0.259) Batch 1.159 (1.319) Loss 2.4511 (2.4115) Accuracy 0.8097.
+[01/06 20:44:41] main-logger INFO: Test: [67/375] Data 0.000 (0.255) Batch 1.208 (1.317) Loss 2.1977 (2.4083) Accuracy 0.9964.
+[01/06 20:44:42] main-logger INFO: Test: [68/375] Data 0.000 (0.252) Batch 1.150 (1.315) Loss 2.1890 (2.4050) Accuracy 0.9553.
+[01/06 20:44:43] main-logger INFO: Test: [69/375] Data 0.000 (0.248) Batch 0.792 (1.307) Loss 2.5206 (2.4064) Accuracy 0.8829.
+[01/06 20:44:44] main-logger INFO: Test: [70/375] Data 0.000 (0.244) Batch 0.828 (1.301) Loss 2.4994 (2.4073) Accuracy 0.6819.
+[01/06 20:44:45] main-logger INFO: Test: [71/375] Data 0.001 (0.241) Batch 0.922 (1.295) Loss 2.6229 (2.4107) Accuracy 0.8789.
+[01/06 20:44:46] main-logger INFO: Test: [72/375] Data 0.000 (0.238) Batch 1.024 (1.291) Loss 2.1090 (2.4072) Accuracy 0.9156.
+[01/06 20:44:47] main-logger INFO: Test: [73/375] Data 0.000 (0.234) Batch 1.127 (1.289) Loss 2.9859 (2.4175) Accuracy 0.6408.
+[01/06 20:44:48] main-logger INFO: Test: [74/375] Data 0.001 (0.231) Batch 1.049 (1.286) Loss 2.2502 (2.4155) Accuracy 0.9273.
+[01/06 20:44:49] main-logger INFO: Test: [75/375] Data 0.000 (0.228) Batch 0.826 (1.280) Loss 1.9719 (2.4102) Accuracy 0.9894.
+[01/06 20:44:50] main-logger INFO: Test: [76/375] Data 0.000 (0.225) Batch 1.043 (1.277) Loss 2.6278 (2.4129) Accuracy 0.6950.
+[01/06 20:44:51] main-logger INFO: Test: [77/375] Data 0.000 (0.222) Batch 1.419 (1.279) Loss 2.4283 (2.4131) Accuracy 0.9195.
+[01/06 20:44:52] main-logger INFO: Test: [78/375] Data 0.000 (0.219) Batch 1.007 (1.275) Loss 2.2478 (2.4105) Accuracy 0.8676.
+[01/06 20:44:53] main-logger INFO: Test: [79/375] Data 0.000 (0.217) Batch 0.937 (1.271) Loss 2.8020 (2.4163) Accuracy 0.8154.
+[01/06 20:44:54] main-logger INFO: Test: [80/375] Data 0.000 (0.214) Batch 1.077 (1.268) Loss 2.6422 (2.4195) Accuracy 0.8680.
+[01/06 20:44:55] main-logger INFO: Test: [81/375] Data 0.000 (0.211) Batch 0.867 (1.263) Loss 2.6428 (2.4217) Accuracy 0.8811.
+[01/06 20:44:56] main-logger INFO: Test: [82/375] Data 0.000 (0.209) Batch 0.935 (1.259) Loss 2.7972 (2.4261) Accuracy 0.7584.
+[01/06 20:44:57] main-logger INFO: Test: [83/375] Data 0.000 (0.206) Batch 0.846 (1.254) Loss 2.2493 (2.4243) Accuracy 0.9176.
+[01/06 20:44:58] main-logger INFO: Test: [84/375] Data 0.000 (0.204) Batch 1.302 (1.255) Loss 3.4578 (2.4386) Accuracy 0.5591.
+[01/06 20:44:59] main-logger INFO: Test: [85/375] Data 0.000 (0.201) Batch 1.051 (1.253) Loss 2.0769 (2.4339) Accuracy 0.9738.
+[01/06 20:45:00] main-logger INFO: Test: [86/375] Data 0.000 (0.199) Batch 0.911 (1.249) Loss 3.2307 (2.4446) Accuracy 0.7300.
+[01/06 20:45:01] main-logger INFO: Test: [87/375] Data 0.000 (0.197) Batch 0.954 (1.245) Loss 2.1389 (2.4411) Accuracy 0.9226.
+[01/06 20:45:02] main-logger INFO: Test: [88/375] Data 0.001 (0.194) Batch 1.077 (1.243) Loss 2.5369 (2.4422) Accuracy 0.9062.
+[01/06 20:45:03] main-logger INFO: Test: [89/375] Data 0.000 (0.192) Batch 0.885 (1.239) Loss 2.1819 (2.4389) Accuracy 0.8779.
+[01/06 20:45:04] main-logger INFO: Test: [90/375] Data 0.000 (0.190) Batch 1.088 (1.238) Loss 2.8111 (2.4438) Accuracy 0.8163.
+[01/06 20:45:05] main-logger INFO: Test: [91/375] Data 0.000 (0.188) Batch 1.046 (1.236) Loss 2.1693 (2.4413) Accuracy 0.8471.
+[01/06 20:45:06] main-logger INFO: Test: [92/375] Data 0.000 (0.186) Batch 0.835 (1.231) Loss 2.3142 (2.4399) Accuracy 0.9426.
+[01/06 20:45:07] main-logger INFO: Test: [93/375] Data 0.000 (0.184) Batch 0.855 (1.227) Loss 1.9743 (2.4353) Accuracy 0.9226.
+[01/06 20:45:08] main-logger INFO: Test: [94/375] Data 0.000 (0.182) Batch 1.109 (1.226) Loss 2.9089 (2.4405) Accuracy 0.8100.
+[01/06 20:45:09] main-logger INFO: Test: [95/375] Data 0.001 (0.180) Batch 1.170 (1.225) Loss 2.1052 (2.4370) Accuracy 0.9446.
+[01/06 20:45:10] main-logger INFO: Test: [96/375] Data 0.000 (0.178) Batch 1.039 (1.223) Loss 2.3733 (2.4365) Accuracy 0.8089.
+[01/06 20:45:11] main-logger INFO: Test: [97/375] Data 0.000 (0.176) Batch 1.055 (1.222) Loss 2.7075 (2.4394) Accuracy 0.7247.
+[01/06 20:45:12] main-logger INFO: Test: [98/375] Data 0.001 (0.175) Batch 1.018 (1.220) Loss 2.2062 (2.4370) Accuracy 0.9509.
+[01/06 20:45:13] main-logger INFO: Test: [99/375] Data 0.001 (0.173) Batch 1.063 (1.218) Loss 2.1848 (2.4339) Accuracy 0.8498.
+[01/06 20:45:14] main-logger INFO: Test: [100/375] Data 0.000 (0.171) Batch 1.015 (1.216) Loss 2.3533 (2.4331) Accuracy 0.7363.
+[01/06 20:45:15] main-logger INFO: Test: [101/375] Data 0.000 (0.169) Batch 1.195 (1.216) Loss 2.2178 (2.4308) Accuracy 0.8925.
+[01/06 20:45:16] main-logger INFO: Test: [102/375] Data 0.000 (0.168) Batch 0.951 (1.213) Loss 2.1013 (2.4275) Accuracy 0.8937.
+[01/06 20:45:18] main-logger INFO: Test: [103/375] Data 0.000 (0.166) Batch 1.205 (1.213) Loss 2.6225 (2.4296) Accuracy 0.9128.
+[01/06 20:45:19] main-logger INFO: Test: [104/375] Data 0.000 (0.165) Batch 1.140 (1.212) Loss 2.7417 (2.4319) Accuracy 0.8060.
+[01/06 20:45:20] main-logger INFO: Test: [105/375] Data 0.000 (0.163) Batch 0.860 (1.209) Loss 2.3289 (2.4310) Accuracy 0.9172.
+[01/06 20:45:20] main-logger INFO: Test: [106/375] Data 0.000 (0.161) Batch 0.937 (1.206) Loss 2.1138 (2.4280) Accuracy 0.9143.
+[01/06 20:45:21] main-logger INFO: Test: [107/375] Data 0.000 (0.160) Batch 0.961 (1.204) Loss 2.6586 (2.4302) Accuracy 0.7144.
+[01/06 20:45:22] main-logger INFO: Test: [108/375] Data 0.000 (0.158) Batch 1.008 (1.202) Loss 2.1691 (2.4277) Accuracy 0.9583.
+[01/06 20:45:23] main-logger INFO: Test: [109/375] Data 0.000 (0.157) Batch 0.916 (1.200) Loss 2.5791 (2.4290) Accuracy 0.7882.
+[01/06 20:45:24] main-logger INFO: Test: [110/375] Data 0.000 (0.156) Batch 0.905 (1.197) Loss 2.3736 (2.4284) Accuracy 0.8380.
+[01/06 20:45:26] main-logger INFO: Test: [111/375] Data 0.000 (0.154) Batch 1.267 (1.198) Loss 2.5850 (2.4298) Accuracy 0.6292.
+[01/06 20:45:27] main-logger INFO: Test: [112/375] Data 0.000 (0.153) Batch 1.282 (1.198) Loss 3.0546 (2.4361) Accuracy 0.5303.
+[01/06 20:45:28] main-logger INFO: Test: [113/375] Data 0.000 (0.151) Batch 0.968 (1.196) Loss 2.6974 (2.4386) Accuracy 0.7018.
+[01/06 20:45:29] main-logger INFO: Test: [114/375] Data 0.000 (0.150) Batch 1.038 (1.195) Loss 2.3140 (2.4376) Accuracy 0.8528.
+[01/06 20:45:30] main-logger INFO: Test: [115/375] Data 0.000 (0.149) Batch 0.857 (1.192) Loss 2.4285 (2.4376) Accuracy 0.8386.
+[01/06 20:45:31] main-logger INFO: Test: [116/375] Data 0.000 (0.148) Batch 0.943 (1.190) Loss 2.5381 (2.4385) Accuracy 0.8107.
+[01/06 20:45:32] main-logger INFO: Test: [117/375] Data 0.000 (0.146) Batch 0.951 (1.188) Loss 2.4494 (2.4386) Accuracy 0.8243.
+[01/06 20:45:33] main-logger INFO: Test: [118/375] Data 0.000 (0.145) Batch 1.326 (1.189) Loss 2.9464 (2.4433) Accuracy 0.6111.
+[01/06 20:45:34] main-logger INFO: Test: [119/375] Data 0.000 (0.144) Batch 1.001 (1.187) Loss 2.2037 (2.4414) Accuracy 0.8718.
+[01/06 20:45:35] main-logger INFO: Test: [120/375] Data 0.000 (0.143) Batch 1.100 (1.187) Loss 2.3104 (2.4403) Accuracy 0.9013.
+[01/06 20:45:36] main-logger INFO: Test: [121/375] Data 0.000 (0.141) Batch 1.305 (1.188) Loss 2.6682 (2.4422) Accuracy 0.8501.
+[01/06 20:45:37] main-logger INFO: Test: [122/375] Data 0.000 (0.140) Batch 0.915 (1.185) Loss 2.5537 (2.4430) Accuracy 0.6051.
+[01/06 20:45:38] main-logger INFO: Test: [123/375] Data 0.000 (0.139) Batch 0.914 (1.183) Loss 2.4922 (2.4434) Accuracy 0.8305.
+[01/06 20:45:39] main-logger INFO: Test: [124/375] Data 0.000 (0.138) Batch 1.291 (1.184) Loss 2.5613 (2.4443) Accuracy 0.8257.
+[01/06 20:45:41] main-logger INFO: Test: [125/375] Data 0.000 (0.137) Batch 1.203 (1.184) Loss 2.5020 (2.4447) Accuracy 0.7735.
+[01/06 20:45:42] main-logger INFO: Test: [126/375] Data 0.000 (0.136) Batch 0.951 (1.182) Loss 2.1323 (2.4420) Accuracy 0.8944.
+[01/06 20:45:43] main-logger INFO: Test: [127/375] Data 0.000 (0.135) Batch 1.218 (1.183) Loss 2.2279 (2.4400) Accuracy 0.9802.
+[01/06 20:45:44] main-logger INFO: Test: [128/375] Data 0.000 (0.134) Batch 0.808 (1.180) Loss 2.4016 (2.4398) Accuracy 0.8796.
+[01/06 20:45:45] main-logger INFO: Test: [129/375] Data 0.000 (0.133) Batch 1.080 (1.179) Loss 2.5605 (2.4408) Accuracy 0.9575.
+[01/06 20:45:46] main-logger INFO: Test: [130/375] Data 0.000 (0.132) Batch 0.988 (1.177) Loss 2.4084 (2.4406) Accuracy 0.7817.
+[01/06 20:45:47] main-logger INFO: Test: [131/375] Data 0.001 (0.131) Batch 1.224 (1.178) Loss 2.3809 (2.4400) Accuracy 0.9329.
+[01/06 20:45:48] main-logger INFO: Test: [132/375] Data 0.000 (0.130) Batch 0.972 (1.176) Loss 2.1539 (2.4380) Accuracy 0.9567.
+[01/06 20:45:49] main-logger INFO: Test: [133/375] Data 0.000 (0.129) Batch 1.339 (1.178) Loss 2.4492 (2.4381) Accuracy 0.9171.
+[01/06 20:45:50] main-logger INFO: Test: [134/375] Data 0.001 (0.128) Batch 0.936 (1.176) Loss 2.0791 (2.4357) Accuracy 0.9447.
+[01/06 20:45:51] main-logger INFO: Test: [135/375] Data 0.000 (0.127) Batch 1.040 (1.175) Loss 1.9306 (2.4321) Accuracy 0.9517.
+[01/06 20:45:52] main-logger INFO: Test: [136/375] Data 0.000 (0.126) Batch 0.998 (1.173) Loss 2.8029 (2.4350) Accuracy 0.7410.
+[01/06 20:45:53] main-logger INFO: Test: [137/375] Data 0.000 (0.125) Batch 1.228 (1.174) Loss 2.6842 (2.4365) Accuracy 0.6568.
+[01/06 20:45:54] main-logger INFO: Test: [138/375] Data 0.000 (0.124) Batch 0.984 (1.172) Loss 2.2104 (2.4351) Accuracy 0.8873.
+[01/06 20:45:55] main-logger INFO: Test: [139/375] Data 0.000 (0.123) Batch 0.953 (1.171) Loss 2.5469 (2.4359) Accuracy 0.8680.
+[01/06 20:45:57] main-logger INFO: Test: [140/375] Data 0.000 (0.122) Batch 1.371 (1.172) Loss 2.4274 (2.4358) Accuracy 0.9299.
+[01/06 20:45:58] main-logger INFO: Test: [141/375] Data 0.000 (0.121) Batch 0.981 (1.171) Loss 1.9364 (2.4325) Accuracy 0.9557.
+[01/06 20:45:59] main-logger INFO: Test: [142/375] Data 0.000 (0.121) Batch 1.062 (1.170) Loss 2.6152 (2.4337) Accuracy 0.7926.
+[01/06 20:46:00] main-logger INFO: Test: [143/375] Data 0.000 (0.120) Batch 0.991 (1.169) Loss 2.2909 (2.4328) Accuracy 0.9223.
+[01/06 20:46:01] main-logger INFO: Test: [144/375] Data 0.001 (0.119) Batch 0.989 (1.168) Loss 2.0693 (2.4304) Accuracy 0.9687.
+[01/06 20:46:02] main-logger INFO: Test: [145/375] Data 0.000 (0.118) Batch 1.064 (1.167) Loss 2.1616 (2.4287) Accuracy 0.9101.
+[01/06 20:46:03] main-logger INFO: Test: [146/375] Data 0.000 (0.117) Batch 1.220 (1.167) Loss 2.0879 (2.4265) Accuracy 0.9136.
+[01/06 20:46:04] main-logger INFO: Test: [147/375] Data 0.000 (0.117) Batch 1.079 (1.167) Loss 2.3222 (2.4258) Accuracy 0.8589.
+[01/06 20:46:05] main-logger INFO: Test: [148/375] Data 0.000 (0.116) Batch 0.843 (1.165) Loss 2.0844 (2.4234) Accuracy 0.9633.
+[01/06 20:46:06] main-logger INFO: Test: [149/375] Data 0.000 (0.115) Batch 0.994 (1.163) Loss 2.5115 (2.4241) Accuracy 0.7323.
+[01/06 20:46:07] main-logger INFO: Test: [150/375] Data 0.000 (0.114) Batch 1.178 (1.163) Loss 2.5789 (2.4251) Accuracy 0.7338.
+[01/06 20:46:08] main-logger INFO: Test: [151/375] Data 0.000 (0.113) Batch 0.889 (1.162) Loss 2.2629 (2.4238) Accuracy 0.8549.
+[01/06 20:46:09] main-logger INFO: Test: [152/375] Data 0.000 (0.113) Batch 0.993 (1.161) Loss 2.2341 (2.4230) Accuracy 0.8108.
+[01/06 20:46:10] main-logger INFO: Test: [153/375] Data 0.000 (0.112) Batch 1.110 (1.160) Loss 2.9757 (2.4271) Accuracy 0.5296.
+[01/06 20:46:11] main-logger INFO: Test: [154/375] Data 0.001 (0.111) Batch 0.926 (1.159) Loss 2.1911 (2.4256) Accuracy 0.9621.
+[01/06 20:46:12] main-logger INFO: Test: [155/375] Data 0.000 (0.111) Batch 0.831 (1.157) Loss 2.5389 (2.4264) Accuracy 0.8079.
+[01/06 20:46:13] main-logger INFO: Test: [156/375] Data 0.000 (0.110) Batch 0.935 (1.155) Loss 2.8369 (2.4287) Accuracy 0.5734.
+[01/06 20:46:14] main-logger INFO: Test: [157/375] Data 0.000 (0.109) Batch 1.342 (1.156) Loss 2.0534 (2.4262) Accuracy 0.9107.
+[01/06 20:46:15] main-logger INFO: Test: [158/375] Data 0.000 (0.108) Batch 0.805 (1.154) Loss 2.6860 (2.4277) Accuracy 0.7566.
+[01/06 20:46:16] main-logger INFO: Test: [159/375] Data 0.000 (0.108) Batch 0.988 (1.153) Loss 3.0823 (2.4314) Accuracy 0.6548.
+[01/06 20:46:17] main-logger INFO: Test: [160/375] Data 0.000 (0.107) Batch 0.925 (1.152) Loss 2.3082 (2.4307) Accuracy 0.8016.
+[01/06 20:46:18] main-logger INFO: Test: [161/375] Data 0.001 (0.106) Batch 1.090 (1.151) Loss 2.2733 (2.4296) Accuracy 0.9111.
+[01/06 20:46:19] main-logger INFO: Test: [162/375] Data 0.000 (0.106) Batch 1.112 (1.151) Loss 2.3826 (2.4293) Accuracy 0.9573.
+[01/06 20:46:20] main-logger INFO: Test: [163/375] Data 0.000 (0.105) Batch 0.992 (1.150) Loss 2.0672 (2.4271) Accuracy 0.9094.
+[01/06 20:46:21] main-logger INFO: Test: [164/375] Data 0.000 (0.104) Batch 1.129 (1.150) Loss 2.1775 (2.4257) Accuracy 0.8958.
+[01/06 20:46:22] main-logger INFO: Test: [165/375] Data 0.000 (0.104) Batch 0.883 (1.148) Loss 2.1531 (2.4245) Accuracy 0.9104.
+[01/06 20:46:23] main-logger INFO: Test: [166/375] Data 0.000 (0.103) Batch 1.065 (1.148) Loss 2.6865 (2.4260) Accuracy 0.6893.
+[01/06 20:46:24] main-logger INFO: Test: [167/375] Data 0.000 (0.103) Batch 1.302 (1.149) Loss 2.3797 (2.4257) Accuracy 0.8725.
+[01/06 20:46:25] main-logger INFO: Test: [168/375] Data 0.000 (0.102) Batch 0.906 (1.147) Loss 2.3054 (2.4250) Accuracy 0.8207.
+[01/06 20:46:26] main-logger INFO: Test: [169/375] Data 0.000 (0.101) Batch 0.963 (1.146) Loss 2.3951 (2.4249) Accuracy 0.8379.
+[01/06 20:46:27] main-logger INFO: Test: [170/375] Data 0.000 (0.101) Batch 0.945 (1.145) Loss 2.7577 (2.4264) Accuracy 0.6883.
+[01/06 20:46:28] main-logger INFO: Test: [171/375] Data 0.000 (0.100) Batch 1.004 (1.144) Loss 2.2906 (2.4254) Accuracy 0.8224.
+[01/06 20:46:29] main-logger INFO: Test: [172/375] Data 0.000 (0.100) Batch 0.964 (1.143) Loss 2.7264 (2.4274) Accuracy 0.7768.
+[01/06 20:46:30] main-logger INFO: Test: [173/375] Data 0.000 (0.099) Batch 0.818 (1.141) Loss 2.5186 (2.4279) Accuracy 0.7918.
+[01/06 20:46:31] main-logger INFO: Test: [174/375] Data 0.000 (0.098) Batch 1.394 (1.143) Loss 2.9062 (2.4306) Accuracy 0.6231.
+[01/06 20:46:32] main-logger INFO: Test: [175/375] Data 0.000 (0.098) Batch 1.020 (1.142) Loss 2.2953 (2.4298) Accuracy 0.9446.
+[01/06 20:46:33] main-logger INFO: Test: [176/375] Data 0.000 (0.097) Batch 0.840 (1.140) Loss 2.7861 (2.4317) Accuracy 0.7191.
+[01/06 20:46:34] main-logger INFO: Test: [177/375] Data 0.000 (0.097) Batch 0.988 (1.139) Loss 2.5388 (2.4322) Accuracy 0.7120.
+[01/06 20:46:35] main-logger INFO: Test: [178/375] Data 0.001 (0.096) Batch 0.969 (1.138) Loss 2.3793 (2.4320) Accuracy 0.8692.
+[01/06 20:46:36] main-logger INFO: Test: [179/375] Data 0.000 (0.096) Batch 0.841 (1.137) Loss 2.5039 (2.4324) Accuracy 0.8444.
+[01/06 20:46:37] main-logger INFO: Test: [180/375] Data 0.000 (0.095) Batch 1.004 (1.136) Loss 2.7679 (2.4342) Accuracy 0.7953.
+[01/06 20:46:38] main-logger INFO: Test: [181/375] Data 0.000 (0.095) Batch 1.188 (1.136) Loss 2.3681 (2.4339) Accuracy 0.8091.
+[01/06 20:46:39] main-logger INFO: Test: [182/375] Data 0.000 (0.094) Batch 0.888 (1.135) Loss 2.6522 (2.4349) Accuracy 0.7839.
+[01/06 20:46:40] main-logger INFO: Test: [183/375] Data 0.000 (0.094) Batch 0.835 (1.133) Loss 2.2115 (2.4337) Accuracy 0.9033.
+[01/06 20:46:41] main-logger INFO: Test: [184/375] Data 0.000 (0.093) Batch 1.066 (1.133) Loss 2.0552 (2.4319) Accuracy 0.9223.
+[01/06 20:46:42] main-logger INFO: Test: [185/375] Data 0.001 (0.093) Batch 1.144 (1.133) Loss 2.5588 (2.4326) Accuracy 0.8383.
+[01/06 20:46:43] main-logger INFO: Test: [186/375] Data 0.000 (0.092) Batch 0.871 (1.132) Loss 2.4127 (2.4325) Accuracy 0.8264.
+[01/06 20:46:44] main-logger INFO: Test: [187/375] Data 0.000 (0.092) Batch 1.032 (1.131) Loss 2.3455 (2.4320) Accuracy 0.9355.
+[01/06 20:46:45] main-logger INFO: Test: [188/375] Data 0.000 (0.091) Batch 1.093 (1.131) Loss 2.2895 (2.4313) Accuracy 0.9532.
+[01/06 20:46:46] main-logger INFO: Test: [189/375] Data 0.000 (0.091) Batch 0.836 (1.129) Loss 2.5527 (2.4318) Accuracy 0.8003.
+[01/06 20:46:47] main-logger INFO: Test: [190/375] Data 0.000 (0.090) Batch 0.906 (1.128) Loss 2.5608 (2.4324) Accuracy 0.6822.
+[01/06 20:46:48] main-logger INFO: Test: [191/375] Data 0.000 (0.090) Batch 1.231 (1.129) Loss 2.8016 (2.4348) Accuracy 0.8439.
+[01/06 20:46:49] main-logger INFO: Test: [192/375] Data 0.001 (0.089) Batch 0.999 (1.128) Loss 2.3012 (2.4339) Accuracy 0.9222.
+[01/06 20:46:50] main-logger INFO: Test: [193/375] Data 0.000 (0.089) Batch 1.151 (1.128) Loss 2.3954 (2.4337) Accuracy 0.8140.
+[01/06 20:46:51] main-logger INFO: Test: [194/375] Data 0.000 (0.088) Batch 0.860 (1.127) Loss 2.2329 (2.4327) Accuracy 0.9037.
+[01/06 20:46:52] main-logger INFO: Test: [195/375] Data 0.000 (0.088) Batch 1.172 (1.127) Loss 2.1857 (2.4315) Accuracy 0.7584.
+[01/06 20:46:54] main-logger INFO: Test: [196/375] Data 0.000 (0.087) Batch 1.160 (1.127) Loss 2.0763 (2.4294) Accuracy 0.9433.
+[01/06 20:46:55] main-logger INFO: Test: [197/375] Data 0.000 (0.087) Batch 1.034 (1.127) Loss 2.8553 (2.4313) Accuracy 0.6644.
+[01/06 20:46:56] main-logger INFO: Test: [198/375] Data 0.000 (0.087) Batch 1.389 (1.128) Loss 2.6927 (2.4328) Accuracy 0.5979.
+[01/06 20:46:57] main-logger INFO: Test: [199/375] Data 0.000 (0.086) Batch 0.955 (1.127) Loss 2.4414 (2.4328) Accuracy 0.9294.
+[01/06 20:46:58] main-logger INFO: Test: [200/375] Data 0.000 (0.086) Batch 0.938 (1.126) Loss 2.7173 (2.4343) Accuracy 0.7660.
+[01/06 20:46:59] main-logger INFO: Test: [201/375] Data 0.000 (0.085) Batch 1.223 (1.127) Loss 2.4823 (2.4345) Accuracy 0.9135.
+[01/06 20:47:00] main-logger INFO: Test: [202/375] Data 0.000 (0.085) Batch 0.997 (1.126) Loss 2.4268 (2.4345) Accuracy 0.8569.
+[01/06 20:47:01] main-logger INFO: Test: [203/375] Data 0.000 (0.084) Batch 0.962 (1.125) Loss 2.3514 (2.4341) Accuracy 0.8791.
+[01/06 20:47:02] main-logger INFO: Test: [204/375] Data 0.000 (0.084) Batch 0.985 (1.125) Loss 2.1988 (2.4331) Accuracy 0.9739.
+[01/06 20:47:03] main-logger INFO: Test: [205/375] Data 0.001 (0.084) Batch 1.130 (1.125) Loss 2.2795 (2.4323) Accuracy 0.9065.
+[01/06 20:47:04] main-logger INFO: Test: [206/375] Data 0.000 (0.083) Batch 0.967 (1.124) Loss 2.5591 (2.4331) Accuracy 0.9385.
+[01/06 20:47:05] main-logger INFO: Test: [207/375] Data 0.000 (0.083) Batch 1.171 (1.124) Loss 2.7847 (2.4349) Accuracy 0.8098.
+[01/06 20:47:06] main-logger INFO: Test: [208/375] Data 0.001 (0.082) Batch 1.053 (1.124) Loss 2.4120 (2.4348) Accuracy 0.9258.
+[01/06 20:47:07] main-logger INFO: Test: [209/375] Data 0.000 (0.082) Batch 0.942 (1.123) Loss 2.5534 (2.4354) Accuracy 0.7521.
+[01/06 20:47:08] main-logger INFO: Test: [210/375] Data 0.000 (0.082) Batch 1.024 (1.122) Loss 2.2892 (2.4346) Accuracy 0.9726.
+[01/06 20:47:10] main-logger INFO: Test: [211/375] Data 0.000 (0.081) Batch 1.299 (1.123) Loss 2.2686 (2.4340) Accuracy 0.8443.
+[01/06 20:47:10] main-logger INFO: Test: [212/375] Data 0.000 (0.081) Batch 0.847 (1.122) Loss 2.5661 (2.4346) Accuracy 0.9057.
+[01/06 20:47:11] main-logger INFO: Test: [213/375] Data 0.000 (0.081) Batch 0.896 (1.121) Loss 2.5379 (2.4350) Accuracy 0.9671.
+[01/06 20:47:12] main-logger INFO: Test: [214/375] Data 0.000 (0.080) Batch 0.950 (1.120) Loss 2.6726 (2.4360) Accuracy 0.6635.
+[01/06 20:47:13] main-logger INFO: Test: [215/375] Data 0.001 (0.080) Batch 1.037 (1.120) Loss 2.4837 (2.4362) Accuracy 0.7414.
+[01/06 20:47:14] main-logger INFO: Test: [216/375] Data 0.000 (0.079) Batch 0.847 (1.118) Loss 2.5529 (2.4367) Accuracy 0.8174.
+[01/06 20:47:15] main-logger INFO: Test: [217/375] Data 0.000 (0.079) Batch 1.008 (1.118) Loss 2.7819 (2.4382) Accuracy 0.6677.
+[01/06 20:47:16] main-logger INFO: Test: [218/375] Data 0.000 (0.079) Batch 1.079 (1.118) Loss 2.3589 (2.4378) Accuracy 0.8814.
+[01/06 20:47:17] main-logger INFO: Test: [219/375] Data 0.000 (0.078) Batch 0.854 (1.117) Loss 2.2497 (2.4369) Accuracy 0.9424.
+[01/06 20:47:18] main-logger INFO: Test: [220/375] Data 0.000 (0.078) Batch 0.950 (1.116) Loss 1.9582 (2.4351) Accuracy 0.9835.
+[01/06 20:47:19] main-logger INFO: Test: [221/375] Data 0.000 (0.078) Batch 1.035 (1.115) Loss 2.2874 (2.4343) Accuracy 0.9686.
+[01/06 20:47:20] main-logger INFO: Test: [222/375] Data 0.000 (0.077) Batch 0.910 (1.114) Loss 1.9787 (2.4322) Accuracy 0.9873.
+[01/06 20:47:21] main-logger INFO: Test: [223/375] Data 0.000 (0.077) Batch 0.975 (1.114) Loss 2.2319 (2.4314) Accuracy 0.8875.
+[01/06 20:47:22] main-logger INFO: Test: [224/375] Data 0.000 (0.077) Batch 0.874 (1.113) Loss 2.5153 (2.4317) Accuracy 0.9067.
+[01/06 20:47:23] main-logger INFO: Test: [225/375] Data 0.000 (0.076) Batch 1.425 (1.114) Loss 2.7997 (2.4334) Accuracy 0.7716.
+[01/06 20:47:24] main-logger INFO: Test: [226/375] Data 0.000 (0.076) Batch 0.863 (1.113) Loss 2.2384 (2.4326) Accuracy 0.8928.
+[01/06 20:47:25] main-logger INFO: Test: [227/375] Data 0.000 (0.076) Batch 0.878 (1.112) Loss 2.0743 (2.4312) Accuracy 0.9148.
+[01/06 20:47:26] main-logger INFO: Test: [228/375] Data 0.000 (0.075) Batch 1.176 (1.112) Loss 2.3296 (2.4306) Accuracy 0.9745.
+[01/06 20:47:27] main-logger INFO: Test: [229/375] Data 0.001 (0.075) Batch 1.112 (1.112) Loss 3.1082 (2.4344) Accuracy 0.5566.
+[01/06 20:47:28] main-logger INFO: Test: [230/375] Data 0.000 (0.075) Batch 0.856 (1.111) Loss 1.9862 (2.4325) Accuracy 0.9455.
+[01/06 20:47:29] main-logger INFO: Test: [231/375] Data 0.000 (0.074) Batch 0.786 (1.110) Loss 2.9117 (2.4348) Accuracy 0.7674.
+[01/06 20:47:30] main-logger INFO: Test: [232/375] Data 0.000 (0.074) Batch 1.104 (1.110) Loss 1.8255 (2.4325) Accuracy 0.9776.
+[01/06 20:47:31] main-logger INFO: Test: [233/375] Data 0.000 (0.074) Batch 0.864 (1.109) Loss 2.5329 (2.4329) Accuracy 0.6886.
+[01/06 20:47:32] main-logger INFO: Test: [234/375] Data 0.000 (0.073) Batch 1.038 (1.108) Loss 2.2882 (2.4323) Accuracy 0.9781.
+[01/06 20:47:33] main-logger INFO: Test: [235/375] Data 0.000 (0.073) Batch 1.139 (1.109) Loss 2.7666 (2.4339) Accuracy 0.6490.
+[01/06 20:47:34] main-logger INFO: Test: [236/375] Data 0.001 (0.073) Batch 0.892 (1.108) Loss 2.7443 (2.4352) Accuracy 0.6954.
+[01/06 20:47:35] main-logger INFO: Test: [237/375] Data 0.000 (0.072) Batch 0.881 (1.107) Loss 2.7912 (2.4366) Accuracy 0.6867.
+[01/06 20:47:36] main-logger INFO: Test: [238/375] Data 0.000 (0.072) Batch 0.824 (1.105) Loss 2.0884 (2.4353) Accuracy 0.9052.
+[01/06 20:47:37] main-logger INFO: Test: [239/375] Data 0.000 (0.072) Batch 1.389 (1.107) Loss 2.5677 (2.4361) Accuracy 0.7665.
+[01/06 20:47:38] main-logger INFO: Test: [240/375] Data 0.000 (0.071) Batch 0.900 (1.106) Loss 2.6223 (2.4369) Accuracy 0.8706.
+[01/06 20:47:39] main-logger INFO: Test: [241/375] Data 0.000 (0.071) Batch 0.886 (1.105) Loss 2.7868 (2.4382) Accuracy 0.7616.
+[01/06 20:47:40] main-logger INFO: Test: [242/375] Data 0.000 (0.071) Batch 1.024 (1.105) Loss 2.0546 (2.4368) Accuracy 0.9041.
+[01/06 20:47:41] main-logger INFO: Test: [243/375] Data 0.001 (0.071) Batch 0.993 (1.104) Loss 2.5813 (2.4373) Accuracy 0.6933.
+[01/06 20:47:42] main-logger INFO: Test: [244/375] Data 0.000 (0.070) Batch 1.312 (1.105) Loss 2.3148 (2.4368) Accuracy 0.9198.
+[01/06 20:47:43] main-logger INFO: Test: [245/375] Data 0.000 (0.070) Batch 1.130 (1.105) Loss 2.3560 (2.4364) Accuracy 0.8813.
+[01/06 20:47:44] main-logger INFO: Test: [246/375] Data 0.001 (0.070) Batch 0.902 (1.104) Loss 1.9335 (2.4346) Accuracy 0.9513.
+[01/06 20:47:45] main-logger INFO: Test: [247/375] Data 0.000 (0.069) Batch 0.981 (1.104) Loss 2.2702 (2.4339) Accuracy 0.8939.
+[01/06 20:47:46] main-logger INFO: Test: [248/375] Data 0.000 (0.069) Batch 0.895 (1.103) Loss 2.3152 (2.4335) Accuracy 0.9027.
+[01/06 20:47:47] main-logger INFO: Test: [249/375] Data 0.000 (0.069) Batch 1.336 (1.104) Loss 2.0025 (2.4317) Accuracy 0.9924.
+[01/06 20:47:48] main-logger INFO: Test: [250/375] Data 0.000 (0.069) Batch 0.908 (1.103) Loss 2.7866 (2.4332) Accuracy 0.5001.
+[01/06 20:47:49] main-logger INFO: Test: [251/375] Data 0.000 (0.068) Batch 0.788 (1.102) Loss 2.1644 (2.4322) Accuracy 0.8816.
+[01/06 20:47:50] main-logger INFO: Test: [252/375] Data 0.000 (0.068) Batch 1.091 (1.102) Loss 2.4168 (2.4322) Accuracy 0.9837.
+[01/06 20:47:51] main-logger INFO: Test: [253/375] Data 0.001 (0.068) Batch 0.886 (1.101) Loss 2.5498 (2.4326) Accuracy 0.8612.
+[01/06 20:47:52] main-logger INFO: Test: [254/375] Data 0.000 (0.068) Batch 0.994 (1.100) Loss 2.0928 (2.4314) Accuracy 0.9186.
+[01/06 20:47:53] main-logger INFO: Test: [255/375] Data 0.000 (0.067) Batch 1.170 (1.101) Loss 2.4066 (2.4313) Accuracy 0.9602.
+[01/06 20:47:54] main-logger INFO: Test: [256/375] Data 0.000 (0.067) Batch 1.047 (1.101) Loss 2.2067 (2.4303) Accuracy 0.8723.
+[01/06 20:47:55] main-logger INFO: Test: [257/375] Data 0.000 (0.067) Batch 0.860 (1.100) Loss 2.2738 (2.4298) Accuracy 0.9149.
+[01/06 20:47:56] main-logger INFO: Test: [258/375] Data 0.000 (0.067) Batch 1.016 (1.099) Loss 2.9118 (2.4316) Accuracy 0.4798.
+[01/06 20:47:57] main-logger INFO: Test: [259/375] Data 0.000 (0.066) Batch 1.201 (1.100) Loss 2.5494 (2.4321) Accuracy 0.7753.
+[01/06 20:47:58] main-logger INFO: Test: [260/375] Data 0.000 (0.066) Batch 0.870 (1.099) Loss 2.1059 (2.4309) Accuracy 0.9658.
+[01/06 20:47:59] main-logger INFO: Test: [261/375] Data 0.000 (0.066) Batch 0.935 (1.098) Loss 2.4799 (2.4311) Accuracy 0.6893.
+[01/06 20:48:00] main-logger INFO: Test: [262/375] Data 0.000 (0.066) Batch 0.919 (1.097) Loss 2.1777 (2.4301) Accuracy 0.9735.
+[01/06 20:48:01] main-logger INFO: Test: [263/375] Data 0.000 (0.065) Batch 1.084 (1.097) Loss 1.9961 (2.4288) Accuracy 0.9526.
+[01/06 20:48:02] main-logger INFO: Test: [264/375] Data 0.000 (0.065) Batch 0.873 (1.097) Loss 2.2472 (2.4281) Accuracy 0.9153.
+[01/06 20:48:03] main-logger INFO: Test: [265/375] Data 0.000 (0.065) Batch 0.847 (1.096) Loss 3.0972 (2.4303) Accuracy 0.7257.
+[01/06 20:48:04] main-logger INFO: Test: [266/375] Data 0.000 (0.065) Batch 1.047 (1.095) Loss 2.2625 (2.4297) Accuracy 0.8208.
+[01/06 20:48:05] main-logger INFO: Test: [267/375] Data 0.001 (0.064) Batch 0.949 (1.095) Loss 2.1669 (2.4287) Accuracy 0.9110.
+[01/06 20:48:06] main-logger INFO: Test: [268/375] Data 0.000 (0.064) Batch 0.923 (1.094) Loss 2.4713 (2.4288) Accuracy 0.9227.
+[01/06 20:48:07] main-logger INFO: Test: [269/375] Data 0.000 (0.064) Batch 0.843 (1.093) Loss 2.6993 (2.4296) Accuracy 0.7595.
+[01/06 20:48:08] main-logger INFO: Test: [270/375] Data 0.000 (0.064) Batch 0.934 (1.093) Loss 2.7601 (2.4308) Accuracy 0.6170.
+[01/06 20:48:09] main-logger INFO: Test: [271/375] Data 0.000 (0.063) Batch 0.966 (1.092) Loss 2.7109 (2.4318) Accuracy 0.7128.
+[01/06 20:48:10] main-logger INFO: Test: [272/375] Data 0.000 (0.063) Batch 1.084 (1.092) Loss 2.6013 (2.4325) Accuracy 0.8965.
+[01/06 20:48:11] main-logger INFO: Test: [273/375] Data 0.000 (0.063) Batch 0.939 (1.092) Loss 2.3332 (2.4322) Accuracy 0.8979.
+[01/06 20:48:12] main-logger INFO: Test: [274/375] Data 0.000 (0.063) Batch 1.243 (1.092) Loss 2.7176 (2.4335) Accuracy 0.7854.
+[01/06 20:48:13] main-logger INFO: Test: [275/375] Data 0.000 (0.062) Batch 1.038 (1.092) Loss 2.1892 (2.4325) Accuracy 0.9766.
+[01/06 20:48:14] main-logger INFO: Test: [276/375] Data 0.000 (0.062) Batch 0.847 (1.091) Loss 2.0776 (2.4316) Accuracy 0.9492.
+[01/06 20:48:15] main-logger INFO: Test: [277/375] Data 0.000 (0.062) Batch 1.325 (1.092) Loss 2.2337 (2.4308) Accuracy 0.9605.
+[01/06 20:48:16] main-logger INFO: Test: [278/375] Data 0.000 (0.062) Batch 1.074 (1.092) Loss 2.3601 (2.4305) Accuracy 0.8117.
+[01/06 20:48:17] main-logger INFO: Test: [279/375] Data 0.000 (0.062) Batch 0.942 (1.091) Loss 2.4798 (2.4306) Accuracy 0.8386.
+[01/06 20:48:18] main-logger INFO: Test: [280/375] Data 0.000 (0.061) Batch 1.388 (1.092) Loss 2.4154 (2.4306) Accuracy 0.8155.
+[01/06 20:48:19] main-logger INFO: Test: [281/375] Data 0.000 (0.061) Batch 0.968 (1.092) Loss 2.3605 (2.4304) Accuracy 0.8847.
+[01/06 20:48:21] main-logger INFO: Test: [282/375] Data 0.000 (0.061) Batch 1.036 (1.092) Loss 2.5348 (2.4308) Accuracy 0.7399.
+[01/06 20:48:22] main-logger INFO: Test: [283/375] Data 0.000 (0.061) Batch 1.079 (1.092) Loss 2.5115 (2.4311) Accuracy 0.8538.
+[01/06 20:48:22] main-logger INFO: Test: [284/375] Data 0.000 (0.060) Batch 0.899 (1.091) Loss 2.4523 (2.4312) Accuracy 0.8201.
+[01/06 20:48:23] main-logger INFO: Test: [285/375] Data 0.000 (0.060) Batch 0.937 (1.091) Loss 2.1132 (2.4300) Accuracy 0.9568.
+[01/06 20:48:24] main-logger INFO: Test: [286/375] Data 0.000 (0.060) Batch 0.952 (1.090) Loss 2.2203 (2.4293) Accuracy 0.9102.
+[01/06 20:48:26] main-logger INFO: Test: [287/375] Data 0.000 (0.060) Batch 1.199 (1.090) Loss 2.4134 (2.4292) Accuracy 0.8799.
+[01/06 20:48:26] main-logger INFO: Test: [288/375] Data 0.000 (0.060) Batch 0.919 (1.090) Loss 2.0857 (2.4280) Accuracy 0.9328.
+[01/06 20:48:27] main-logger INFO: Test: [289/375] Data 0.000 (0.059) Batch 0.832 (1.089) Loss nan (nan) Accuracy 0.5119.
+[01/06 20:48:28] main-logger INFO: Test: [290/375] Data 0.000 (0.059) Batch 1.007 (1.089) Loss 2.2503 (nan) Accuracy 0.9101.
+[01/06 20:48:29] main-logger INFO: Test: [291/375] Data 0.000 (0.059) Batch 0.927 (1.088) Loss 2.5772 (nan) Accuracy 0.7025.
+[01/06 20:48:29] main-logger INFO: len(selected) == 0
+[01/06 20:48:30] main-logger INFO: Test: [292/375] Data 0.000 (0.059) Batch 0.946 (1.088) Loss 2.6382 (nan) Accuracy 0.9055.
+[01/06 20:48:31] main-logger INFO: Test: [293/375] Data 0.000 (0.059) Batch 0.833 (1.087) Loss 2.8160 (nan) Accuracy 0.5953.
+[01/06 20:48:32] main-logger INFO: Test: [294/375] Data 0.000 (0.058) Batch 0.958 (1.086) Loss 2.4989 (nan) Accuracy 0.7739.
+[01/06 20:48:33] main-logger INFO: Test: [295/375] Data 0.000 (0.058) Batch 0.976 (1.086) Loss 2.0064 (nan) Accuracy 0.9820.
+[01/06 20:48:34] main-logger INFO: Test: [296/375] Data 0.000 (0.058) Batch 0.982 (1.086) Loss 2.5025 (nan) Accuracy 0.9081.
+[01/06 20:48:35] main-logger INFO: Test: [297/375] Data 0.000 (0.058) Batch 0.868 (1.085) Loss 2.7058 (nan) Accuracy 0.8489.
+[01/06 20:48:36] main-logger INFO: Test: [298/375] Data 0.000 (0.058) Batch 1.305 (1.086) Loss 2.1330 (nan) Accuracy 0.8867.
+[01/06 20:48:37] main-logger INFO: Test: [299/375] Data 0.000 (0.057) Batch 0.965 (1.085) Loss 2.5594 (nan) Accuracy 0.8243.
+[01/06 20:48:38] main-logger INFO: Test: [300/375] Data 0.000 (0.057) Batch 0.960 (1.085) Loss 2.7176 (nan) Accuracy 0.7403.
+[01/06 20:48:39] main-logger INFO: Test: [301/375] Data 0.000 (0.057) Batch 1.192 (1.085) Loss 2.0059 (nan) Accuracy 0.9760.
+[01/06 20:48:40] main-logger INFO: Test: [302/375] Data 0.000 (0.057) Batch 0.898 (1.084) Loss 2.4722 (nan) Accuracy 0.7967.
+[01/06 20:48:41] main-logger INFO: Test: [303/375] Data 0.000 (0.057) Batch 1.004 (1.084) Loss 2.5724 (nan) Accuracy 0.8473.
+[01/06 20:48:42] main-logger INFO: Test: [304/375] Data 0.000 (0.056) Batch 1.105 (1.084) Loss 2.4669 (nan) Accuracy 0.8673.
+[01/06 20:48:43] main-logger INFO: Test: [305/375] Data 0.001 (0.056) Batch 0.889 (1.084) Loss 2.8510 (nan) Accuracy 0.6863.
+[01/06 20:48:44] main-logger INFO: Test: [306/375] Data 0.000 (0.056) Batch 0.824 (1.083) Loss 2.0909 (nan) Accuracy 0.9229.
+[01/06 20:48:45] main-logger INFO: Test: [307/375] Data 0.000 (0.056) Batch 1.129 (1.083) Loss 2.4010 (nan) Accuracy 0.8779.
+[01/06 20:48:46] main-logger INFO: Test: [308/375] Data 0.000 (0.056) Batch 1.109 (1.083) Loss 2.5699 (nan) Accuracy 0.8626.
+[01/06 20:48:47] main-logger INFO: Test: [309/375] Data 0.000 (0.056) Batch 0.891 (1.082) Loss 2.5316 (nan) Accuracy 0.8667.
+[01/06 20:48:48] main-logger INFO: Test: [310/375] Data 0.000 (0.055) Batch 0.876 (1.082) Loss 1.9451 (nan) Accuracy 0.9253.
+[01/06 20:48:49] main-logger INFO: Test: [311/375] Data 0.000 (0.055) Batch 1.031 (1.082) Loss 1.9126 (nan) Accuracy 0.9522.
+[01/06 20:48:50] main-logger INFO: Test: [312/375] Data 0.001 (0.055) Batch 0.921 (1.081) Loss 2.5496 (nan) Accuracy 0.7916.
+[01/06 20:48:51] main-logger INFO: Test: [313/375] Data 0.000 (0.055) Batch 0.791 (1.080) Loss 2.2958 (nan) Accuracy 0.8043.
+[01/06 20:48:52] main-logger INFO: Test: [314/375] Data 0.000 (0.055) Batch 1.055 (1.080) Loss 3.0670 (nan) Accuracy 0.6131.
+[01/06 20:48:53] main-logger INFO: Test: [315/375] Data 0.000 (0.055) Batch 0.860 (1.079) Loss 2.2408 (nan) Accuracy 0.9141.
+[01/06 20:48:54] main-logger INFO: Test: [316/375] Data 0.001 (0.054) Batch 1.097 (1.079) Loss 2.4622 (nan) Accuracy 0.8502.
+[01/06 20:48:55] main-logger INFO: Test: [317/375] Data 0.000 (0.054) Batch 1.202 (1.080) Loss 2.1500 (nan) Accuracy 0.8895.
+[01/06 20:48:56] main-logger INFO: Test: [318/375] Data 0.000 (0.054) Batch 0.721 (1.079) Loss 2.4564 (nan) Accuracy 0.8326.
+[01/06 20:48:57] main-logger INFO: Test: [319/375] Data 0.000 (0.054) Batch 1.197 (1.079) Loss 2.0256 (nan) Accuracy 0.9497.
+[01/06 20:48:58] main-logger INFO: Test: [320/375] Data 0.000 (0.054) Batch 1.136 (1.079) Loss 2.6251 (nan) Accuracy 0.9075.
+[01/06 20:48:59] main-logger INFO: Test: [321/375] Data 0.000 (0.054) Batch 0.966 (1.079) Loss 2.3920 (nan) Accuracy 0.8779.
+[01/06 20:49:00] main-logger INFO: Test: [322/375] Data 0.000 (0.053) Batch 1.102 (1.079) Loss 2.6695 (nan) Accuracy 0.7512.
+[01/06 20:49:01] main-logger INFO: Test: [323/375] Data 0.000 (0.053) Batch 0.945 (1.079) Loss 2.4936 (nan) Accuracy 0.9041.
+[01/06 20:49:02] main-logger INFO: Test: [324/375] Data 0.000 (0.053) Batch 0.982 (1.078) Loss 2.2918 (nan) Accuracy 0.7505.
+[01/06 20:49:03] main-logger INFO: Test: [325/375] Data 0.000 (0.053) Batch 1.079 (1.078) Loss 2.9831 (nan) Accuracy 0.6826.
+[01/06 20:49:04] main-logger INFO: Test: [326/375] Data 0.000 (0.053) Batch 0.993 (1.078) Loss 2.5267 (nan) Accuracy 0.7327.
+[01/06 20:49:05] main-logger INFO: Test: [327/375] Data 0.000 (0.053) Batch 0.965 (1.078) Loss 3.0915 (nan) Accuracy 0.6983.
+[01/06 20:49:06] main-logger INFO: Test: [328/375] Data 0.000 (0.052) Batch 0.899 (1.077) Loss 2.5148 (nan) Accuracy 0.8178.
+[01/06 20:49:07] main-logger INFO: Test: [329/375] Data 0.000 (0.052) Batch 1.281 (1.078) Loss 2.1946 (nan) Accuracy 0.8006.
+[01/06 20:49:08] main-logger INFO: Test: [330/375] Data 0.000 (0.052) Batch 0.951 (1.077) Loss 2.0078 (nan) Accuracy 0.8227.
+[01/06 20:49:09] main-logger INFO: Test: [331/375] Data 0.000 (0.052) Batch 0.960 (1.077) Loss 2.7986 (nan) Accuracy 0.7459.
+[01/06 20:49:10] main-logger INFO: Test: [332/375] Data 0.000 (0.052) Batch 1.400 (1.078) Loss 2.5210 (nan) Accuracy 0.8895.
+[01/06 20:49:12] main-logger INFO: Test: [333/375] Data 0.000 (0.052) Batch 1.027 (1.078) Loss 3.2196 (nan) Accuracy 0.6362.
+[01/06 20:49:12] main-logger INFO: Test: [334/375] Data 0.000 (0.051) Batch 0.960 (1.077) Loss 2.6306 (nan) Accuracy 0.7530.
+[01/06 20:49:14] main-logger INFO: Test: [335/375] Data 0.000 (0.051) Batch 1.038 (1.077) Loss 2.1642 (nan) Accuracy 0.9257.
+[01/06 20:49:14] main-logger INFO: Test: [336/375] Data 0.000 (0.051) Batch 0.885 (1.077) Loss 2.8842 (nan) Accuracy 0.8519.
+[01/06 20:49:16] main-logger INFO: Test: [337/375] Data 0.000 (0.051) Batch 1.110 (1.077) Loss 2.6472 (nan) Accuracy 0.8628.
+[01/06 20:49:17] main-logger INFO: Test: [338/375] Data 0.000 (0.051) Batch 1.373 (1.078) Loss 2.8678 (nan) Accuracy 0.6321.
+[01/06 20:49:18] main-logger INFO: Test: [339/375] Data 0.001 (0.051) Batch 1.112 (1.078) Loss 2.3339 (nan) Accuracy 0.9195.
+[01/06 20:49:19] main-logger INFO: Test: [340/375] Data 0.000 (0.051) Batch 0.998 (1.078) Loss 2.6287 (nan) Accuracy 0.7668.
+[01/06 20:49:20] main-logger INFO: Test: [341/375] Data 0.000 (0.050) Batch 0.887 (1.077) Loss 2.3365 (nan) Accuracy 0.8957.
+[01/06 20:49:21] main-logger INFO: Test: [342/375] Data 0.000 (0.050) Batch 1.221 (1.077) Loss 2.3454 (nan) Accuracy 0.8305.
+[01/06 20:49:22] main-logger INFO: Test: [343/375] Data 0.000 (0.050) Batch 0.848 (1.077) Loss 2.2074 (nan) Accuracy 0.8803.
+[01/06 20:49:23] main-logger INFO: Test: [344/375] Data 0.000 (0.050) Batch 0.912 (1.076) Loss 2.3028 (nan) Accuracy 0.9343.
+[01/06 20:49:24] main-logger INFO: Test: [345/375] Data 0.000 (0.050) Batch 0.976 (1.076) Loss 2.4816 (nan) Accuracy 0.9130.
+[01/06 20:49:25] main-logger INFO: Test: [346/375] Data 0.000 (0.050) Batch 0.877 (1.075) Loss 2.2371 (nan) Accuracy 0.9021.
+[01/06 20:49:26] main-logger INFO: Test: [347/375] Data 0.000 (0.050) Batch 0.936 (1.075) Loss 2.5470 (nan) Accuracy 0.7951.
+[01/06 20:49:27] main-logger INFO: Test: [348/375] Data 0.000 (0.049) Batch 0.867 (1.074) Loss 2.3154 (nan) Accuracy 0.9215.
+[01/06 20:49:28] main-logger INFO: Test: [349/375] Data 0.000 (0.049) Batch 1.342 (1.075) Loss 2.5456 (nan) Accuracy 0.8543.
+[01/06 20:49:29] main-logger INFO: Test: [350/375] Data 0.000 (0.049) Batch 1.182 (1.075) Loss 2.3742 (nan) Accuracy 0.8418.
+[01/06 20:49:30] main-logger INFO: Test: [351/375] Data 0.000 (0.049) Batch 0.834 (1.075) Loss 2.2442 (nan) Accuracy 0.9481.
+[01/06 20:49:31] main-logger INFO: Test: [352/375] Data 0.000 (0.049) Batch 1.393 (1.076) Loss 2.3525 (nan) Accuracy 0.8183.
+[01/06 20:49:32] main-logger INFO: Test: [353/375] Data 0.000 (0.049) Batch 0.930 (1.075) Loss 2.2531 (nan) Accuracy 0.9362.
+[01/06 20:49:33] main-logger INFO: Test: [354/375] Data 0.000 (0.049) Batch 0.929 (1.075) Loss nan (nan) Accuracy 0.9354.
+[01/06 20:49:34] main-logger INFO: Test: [355/375] Data 0.000 (0.048) Batch 1.033 (1.075) Loss 2.1948 (nan) Accuracy 0.9621.
+[01/06 20:49:35] main-logger INFO: Test: [356/375] Data 0.001 (0.048) Batch 1.308 (1.075) Loss 2.4461 (nan) Accuracy 0.9421.
+[01/06 20:49:36] main-logger INFO: Test: [357/375] Data 0.000 (0.048) Batch 0.967 (1.075) Loss 2.4883 (nan) Accuracy 0.8557.
+[01/06 20:49:37] main-logger INFO: Test: [358/375] Data 0.000 (0.048) Batch 0.889 (1.075) Loss 2.5508 (nan) Accuracy 0.8515.
+[01/06 20:49:39] main-logger INFO: Test: [359/375] Data 0.000 (0.048) Batch 1.405 (1.076) Loss 2.2001 (nan) Accuracy 0.9562.
+[01/06 20:49:40] main-logger INFO: Test: [360/375] Data 0.000 (0.048) Batch 1.077 (1.076) Loss 2.5514 (nan) Accuracy 0.7787.
+[01/06 20:49:41] main-logger INFO: Test: [361/375] Data 0.000 (0.048) Batch 1.252 (1.076) Loss 2.7796 (nan) Accuracy 0.8830.
+[01/06 20:49:42] main-logger INFO: Test: [362/375] Data 0.001 (0.047) Batch 0.940 (1.076) Loss 2.1801 (nan) Accuracy 0.9120.
+[01/06 20:49:43] main-logger INFO: Test: [363/375] Data 0.000 (0.047) Batch 1.036 (1.076) Loss 2.3178 (nan) Accuracy 0.9152.
+[01/06 20:49:44] main-logger INFO: Test: [364/375] Data 0.000 (0.047) Batch 0.968 (1.075) Loss 2.7780 (nan) Accuracy 0.6866.
+[01/06 20:49:45] main-logger INFO: Test: [365/375] Data 0.000 (0.047) Batch 1.106 (1.075) Loss 2.5738 (nan) Accuracy 0.7274.
+[01/06 20:49:46] main-logger INFO: Test: [366/375] Data 0.000 (0.047) Batch 1.007 (1.075) Loss 2.7086 (nan) Accuracy 0.7994.
+[01/06 20:49:47] main-logger INFO: Test: [367/375] Data 0.000 (0.047) Batch 1.069 (1.075) Loss 2.6612 (nan) Accuracy 0.7750.
+[01/06 20:49:49] main-logger INFO: Test: [368/375] Data 0.000 (0.047) Batch 1.429 (1.076) Loss 2.1266 (nan) Accuracy 0.9309.
+[01/06 20:49:50] main-logger INFO: Test: [369/375] Data 0.000 (0.047) Batch 1.031 (1.076) Loss 2.4309 (nan) Accuracy 0.8262.
+[01/06 20:49:51] main-logger INFO: Test: [370/375] Data 0.000 (0.046) Batch 0.855 (1.075) Loss 2.2989 (nan) Accuracy 0.8817.
+[01/06 20:49:52] main-logger INFO: Test: [371/375] Data 0.000 (0.046) Batch 1.025 (1.075) Loss 2.5134 (nan) Accuracy 0.8795.
+[01/06 20:49:52] main-logger INFO: Test: [372/375] Data 0.001 (0.046) Batch 0.876 (1.075) Loss 1.8313 (nan) Accuracy 0.9577.
+[01/06 20:49:53] main-logger INFO: Test: [373/375] Data 0.000 (0.046) Batch 0.983 (1.074) Loss 2.9968 (nan) Accuracy 0.6729.
+[01/06 20:49:55] main-logger INFO: Test: [374/375] Data 0.000 (0.046) Batch 1.162 (1.075) Loss 2.5290 (nan) Accuracy 0.9047.
+[01/06 20:49:56] main-logger INFO: Test: [375/375] Data 0.000 (0.046) Batch 1.395 (1.076) Loss 2.7127 (nan) Accuracy 0.8923.
+[01/06 20:49:57] main-logger INFO: Val result: mIoU/mAcc/allAcc 0.5430/0.8305/0.8400.
+[01/06 20:49:57] main-logger INFO: Class_6 Result: iou/accuracy 0.3870/0.8325.
+[01/06 20:49:57] main-logger INFO: Class_1 Result: iou/accuracy 0.8247/0.9779.
+[01/06 20:49:57] main-logger INFO: Class_9 Result: iou/accuracy 0.5797/0.7818.
+[01/06 20:49:57] main-logger INFO: Class_7 Result: iou/accuracy 0.4968/0.7421.
+[01/06 20:49:57] main-logger INFO: Class_2 Result: iou/accuracy 0.5731/0.8555.
+[01/06 20:49:57] main-logger INFO: Class_5 Result: iou/accuracy 0.3965/0.7931.
+[01/06 20:49:57] main-logger INFO: <<<<<<<<<<<<<<<<< End Evaluation <<<<<<<<<<<<<<<<<
+[01/06 20:49:57] main-logger INFO: ==>Test done!
